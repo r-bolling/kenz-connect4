@@ -31,31 +31,12 @@ let boardModel = [
   [null, null, null, null, null, null, null],
   [null, null, null, null, null, null, null],
 ];
+
 let currentPlayer = 1;
+let gameOver = 0;
 let numberOfDiscsPlayed = 0;
 
-const displayMessage = function (message) {
-  // stub
-  // TODO: Erase the content of the message div
-  // Display the new message into the message div
-  document.getElementById('message').innerHTML = '';
-  document.getElementById('message').append(message);
-  console.log(message);
-};
-
-const displayCurrentPlayer = function (currPlayer) {
-  displayMessage('Player ' + currPlayer + "'s turn!");
-};
-const displayWhoWon = function (winner) {
-  displayMessage('Player ' + winner + ' wins!');
-};
-const displayTieMessage = function () {
-  displayMessage('Tie game!');
-};
-
-let gameOver = 0;
-
-function addDisk(col) {
+const addDisk = (col) => {
   let disk = document.createElement('div');
   if (currentPlayer == 1) {
     disk.style.backgroundColor = 'black';
@@ -63,130 +44,6 @@ function addDisk(col) {
     disk.style.backgroundColor = 'red';
   }
   col.appendChild(disk);
-}
-
-function updateBoard(col) {
-  for (let i = 6; i >= 0; i--) {
-    if (col.id === `col${i}`) {
-      for (let j = 5; j >= 0; j--) {
-        if (boardModel[j][i] != 1 && boardModel[j][i] != 2) {
-          boardModel[j][i] = currentPlayer;
-          addDisk(col);
-          numberOfDiscsPlayed++;
-          switchToNextPlayer();
-          break;
-        }
-      }
-    }
-  }
-}
-
-const dropDiskIntoColumn = function (columnEl) {
-  // if the column is not full...
-  // update the boardModel
-  // update the HTML
-
-  // if (columnEl < 6) {
-  //   boardModel[columnThatWasClicked] = currentPlayer;
-
-  //  }
-  //   boardModel[5][5] = currentPlayer;
-
-  //  numberOfDiscsPlayed++
-  if (gameOver == 0) {
-    updateBoard(columnEl);
-  }
-};
-
-const winnerHorizontal = function (board) {
-  for (let row = 0; row < board.length; row++) {
-    for (let col = 0; col < 4; col++) {
-      //console.log(`${board[row][col]} ${board[row][col + 1]} ${board[row][col + 2]} ${board[row][col + 3]} `)
-      if (
-        board[row][col] === board[row][col + 1] &&
-        board[row][col] === board[row][col + 2] &&
-        board[row][col] === board[row][col + 3] &&
-        board[row][col] !== null
-      ) {
-        return board[row][col];
-      }
-    }
-  }
-  // return 1, 2, or null
-  return null;
-};
-const winnerVertical = function (board) {
-  for (let row = 0; row < 3; row++) {
-    for (let col = 0; col < board[row].length; col++) {
-      // console.log(`${board[row][col]} ${board[row + 1][col]} ${board[row + 2][col]} ${board[row + 3][col]} `)
-      if (
-        board[row][col] === board[row + 1][col] &&
-        board[row][col] === board[row + 2][col] &&
-        board[row][col] === board[row + 3][col] &&
-        board[row][col] !== null
-      ) {
-        return board[row][col];
-      }
-    }
-  }
-  // return 1, 2, or null
-  return null;
-};
-const winnerDiagonalDownRight = function (board) {
-  // return 1, 2, or null
-  return null;
-};
-const winnerDiagonalUpRight = function (board) {
-  // return 1, 2, or null
-  return null;
-};
-
-const determineGameWinner = function (board) {
-  // pure function
-  const horz = winnerHorizontal(board);
-  const vert = winnerVertical(board);
-  const dnrt = winnerDiagonalDownRight(board);
-  const uprt = winnerDiagonalUpRight(board);
-  let winner;
-
-  if (horz !== null) {
-    winner = horz;
-    //       gameOver = 1;
-  } else if (vert !== null) {
-    winner = vert;
-    //       gameOver = 1;
-  } else if (dnrt !== null) {
-    winner = dnrt;
-    //       gameOver = 1;
-  } else if (uprt !== null) {
-    winner = uprt;
-    //     gameOver = 1;
-  } else {
-    winner = null;
-  }
-
-  // return 1, 2, or null (tie or game isn't isn't over)
-  return winner;
-};
-
-const gameIsATie = function () {
-  // board is completely filled (numberOfDiscsPlayed is 42)
-  // return true or false
-  if (numberOfDiscsPlayed == 42) {
-    //      gameOver = 1;
-    return true;
-  } else {
-    return false;
-  }
-};
-const switchToNextPlayer = function () {
-  // currentPlayer 1 change to 2
-  // currentPlayer 2 change to 1
-  if (currentPlayer == 1) {
-    currentPlayer++;
-  } else if (currentPlayer == 2) {
-    currentPlayer--;
-  }
 };
 
 const columnClickHandler = function (event) {
@@ -217,7 +74,81 @@ const createColumnEventListeners = function () {
   document.querySelector('#col6').addEventListener('click', columnClickHandler);
 };
 
+const determineGameWinner = function (board) {
+  // pure function
+  const horz = winnerHorizontal(board);
+  const vert = winnerVertical(board);
+  const dnrt = winnerDiagonalDownRight(board);
+  const uprt = winnerDiagonalUpRight(board);
+  let winner;
+
+  if (horz !== null) {
+    winner = horz;
+    //       gameOver = 1;
+  } else if (vert !== null) {
+    winner = vert;
+    //       gameOver = 1;
+  } else if (dnrt !== null) {
+    winner = dnrt;
+    //       gameOver = 1;
+  } else if (uprt !== null) {
+    winner = uprt;
+    //     gameOver = 1;
+  } else {
+    winner = null;
+  }
+
+  // return 1, 2, or null (tie or game isn't isn't over)
+  return winner;
+};
+
+const displayCurrentPlayer = function (currPlayer) {
+  displayMessage('Player ' + currPlayer + "'s turn!");
+};
+
+const displayMessage = function (message) {
+  document.getElementById('message').innerHTML = '';
+  document.getElementById('message').append(message);
+  console.log(message);
+};
+
+const displayTieMessage = function () {
+  displayMessage('Tie game!');
+};
+
+const displayWhoWon = function (winner) {
+  displayMessage('Player ' + winner + ' wins!');
+};
+
 const displayBoard = function (boardModel) {};
+
+const dropDiskIntoColumn = function (columnEl) {
+  // if the column is not full...
+  // update the boardModel
+  // update the HTML
+
+  // if (columnEl < 6) {
+  //   boardModel[columnThatWasClicked] = currentPlayer;
+
+  //  }
+  //   boardModel[5][5] = currentPlayer;
+
+  //  numberOfDiscsPlayed++
+  if (gameOver == 0) {
+    updateBoard(columnEl);
+  }
+};
+
+const gameIsATie = function () {
+  // board is completely filled (numberOfDiscsPlayed is 42)
+  // return true or false
+  if (numberOfDiscsPlayed == 42) {
+    //      gameOver = 1;
+    return true;
+  } else {
+    return false;
+  }
+};
 
 const initializeGame = function () {
   displayBoard(boardModel);
@@ -225,12 +156,85 @@ const initializeGame = function () {
   displayCurrentPlayer(currentPlayer);
 };
 
-initializeGame();
+const switchToNextPlayer = function () {
+  // currentPlayer 1 change to 2
+  // currentPlayer 2 change to 1
+  if (currentPlayer == 1) {
+    currentPlayer++;
+  } else if (currentPlayer == 2) {
+    currentPlayer--;
+  }
+};
 
 const takePlayerInput = function () {
   columnClickHandler;
 };
 
+const updateBoard = (col) => {
+  for (let i = 6; i >= 0; i--) {
+    if (col.id === `col${i}`) {
+      for (let j = 5; j >= 0; j--) {
+        if (boardModel[j][i] != 1 && boardModel[j][i] != 2) {
+          boardModel[j][i] = currentPlayer;
+          addDisk(col);
+          numberOfDiscsPlayed++;
+          switchToNextPlayer();
+          break;
+        }
+      }
+    }
+  }
+};
+
+const winnerDiagonalDownRight = function (board) {
+  // return 1, 2, or null
+  return null;
+};
+
+const winnerDiagonalUpRight = function (board) {
+  // return 1, 2, or null
+  return null;
+};
+
+const winnerHorizontal = function (board) {
+  for (let row = 0; row < board.length; row++) {
+    for (let col = 0; col < 4; col++) {
+      //console.log(`${board[row][col]} ${board[row][col + 1]} ${board[row][col + 2]} ${board[row][col + 3]} `)
+      if (
+        board[row][col] === board[row][col + 1] &&
+        board[row][col] === board[row][col + 2] &&
+        board[row][col] === board[row][col + 3] &&
+        board[row][col] !== null
+      ) {
+        return board[row][col];
+      }
+    }
+  }
+  // return 1, 2, or null
+  return null;
+};
+
+const winnerVertical = function (board) {
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < board[row].length; col++) {
+      // console.log(`${board[row][col]} ${board[row + 1][col]} ${board[row + 2][col]} ${board[row + 3][col]} `)
+      if (
+        board[row][col] === board[row + 1][col] &&
+        board[row][col] === board[row + 2][col] &&
+        board[row][col] === board[row + 3][col] &&
+        board[row][col] !== null
+      ) {
+        return board[row][col];
+      }
+    }
+  }
+  // return 1, 2, or null
+  return null;
+};
+
+initializeGame();
+
+// TESTS
 const testWinnerVertical = function () {
   console.assert(
     winnerVertical([
