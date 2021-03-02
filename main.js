@@ -60,7 +60,6 @@ const columnClickHandler = function (event) {
     gameOver = 1;
   } else if (gameOver == 0) {
     displayCurrentPlayer(currentPlayer);
-    //   switchToNextPlayer()
   }
 };
 
@@ -75,7 +74,6 @@ const createColumnEventListeners = function () {
 };
 
 const determineGameWinner = function (board) {
-  // pure function
   const horz = winnerHorizontal(board);
   const vert = winnerVertical(board);
   const dnrt = winnerDiagonalDownRight(board);
@@ -102,8 +100,10 @@ const determineGameWinner = function (board) {
   return winner;
 };
 
+const displayBoard = function (boardModel) {};
+
 const displayCurrentPlayer = function (currPlayer) {
-  displayMessage('Player ' + currPlayer + "'s turn!");
+  displayMessage(`Player ${currPlayer}'s turn!`);
 };
 
 const displayMessage = function (message) {
@@ -117,24 +117,11 @@ const displayTieMessage = function () {
 };
 
 const displayWhoWon = function (winner) {
-  displayMessage('Player ' + winner + ' wins!');
+  displayMessage(`Player ${winner} wins!`);
 };
 
-const displayBoard = function (boardModel) {};
-
 const dropDiskIntoColumn = function (columnEl) {
-  // if the column is not full...
-  // update the boardModel
-  // update the HTML
-
-  // if (columnEl < 6) {
-  //   boardModel[columnThatWasClicked] = currentPlayer;
-
-  //  }
-  //   boardModel[5][5] = currentPlayer;
-
-  //  numberOfDiscsPlayed++
-  if (gameOver == 0) {
+  if (gameOver === 0) {
     updateBoard(columnEl);
   }
 };
@@ -157,11 +144,9 @@ const initializeGame = function () {
 };
 
 const switchToNextPlayer = function () {
-  // currentPlayer 1 change to 2
-  // currentPlayer 2 change to 1
-  if (currentPlayer == 1) {
+  if (currentPlayer === 1) {
     currentPlayer++;
-  } else if (currentPlayer == 2) {
+  } else {
     currentPlayer--;
   }
 };
@@ -187,19 +172,40 @@ const updateBoard = (col) => {
 };
 
 const winnerDiagonalDownRight = function (board) {
-  // return 1, 2, or null
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (
+        board[row][col] === board[row + 1][col + 1] &&
+        board[row][col] === board[row + 2][col + 2] &&
+        board[row][col] === board[row + 3][col + 3] &&
+        board[row][col] !== null
+      ) {
+        return board[row][col];
+      }
+    }
+  }
   return null;
 };
 
 const winnerDiagonalUpRight = function (board) {
-  // return 1, 2, or null
+  for (let row = 5; row > 2; row--) {
+    for (let col = 0; col < 4; col++) {
+      if (
+        board[row][col] === board[row - 1][col + 1] &&
+        board[row][col] === board[row - 2][col + 2] &&
+        board[row][col] === board[row - 3][col + 3] &&
+        board[row][col] !== null
+      ) {
+        return board[row][col];
+      }
+    }
+  }
   return null;
 };
 
 const winnerHorizontal = function (board) {
   for (let row = 0; row < board.length; row++) {
     for (let col = 0; col < 4; col++) {
-      //console.log(`${board[row][col]} ${board[row][col + 1]} ${board[row][col + 2]} ${board[row][col + 3]} `)
       if (
         board[row][col] === board[row][col + 1] &&
         board[row][col] === board[row][col + 2] &&
@@ -210,14 +216,12 @@ const winnerHorizontal = function (board) {
       }
     }
   }
-  // return 1, 2, or null
   return null;
 };
 
 const winnerVertical = function (board) {
   for (let row = 0; row < 3; row++) {
     for (let col = 0; col < board[row].length; col++) {
-      // console.log(`${board[row][col]} ${board[row + 1][col]} ${board[row + 2][col]} ${board[row + 3][col]} `)
       if (
         board[row][col] === board[row + 1][col] &&
         board[row][col] === board[row + 2][col] &&
@@ -228,7 +232,6 @@ const winnerVertical = function (board) {
       }
     }
   }
-  // return 1, 2, or null
   return null;
 };
 
