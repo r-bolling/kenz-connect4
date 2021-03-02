@@ -1,28 +1,3 @@
-/*
-
-1. Initialize the game
-    a. players
-    b. board display
-    c. board model
-    d. current player tracker
-    e. set up click handlers
-2. Take player input
-    a. click handlers on each column
-        - know which player is currently dropping a disc
-        - only allow a drop if the column isn't full
-        - drop a disk into the column
-        - toggle the player
-3. Check for game ending conditions
-    a. has the game been won?
-        - 4 in a row horizontally
-        - 4 in a row vertically
-        - 4 in a row diagonally (down-right)
-        - 4 in a row diagonally (up-right)
-    b. has the game ended in a tie?
-        - display a tie message
-
-*/
-
 let boardModel = [
   [null, null, null, null, null, null, null],
   [null, null, null, null, null, null, null],
@@ -46,11 +21,20 @@ const addDisk = (col) => {
   col.appendChild(disk);
 };
 
+const cleanBoard = function (board) {
+  for (let row = 0; row < board.length; row++) {
+    const boardRow = document.getElementById(`col${row}`);
+    for (let col = 0; col < board[row].length; col++) {
+      if (boardRow.hasChildNodes()) {
+        boardRow.removeChild(boardRow.childNodes[0]);
+      }
+    }
+  }
+};
+
 const columnClickHandler = function (event) {
-  console.log('click!');
   const columnThatWasClicked = event.currentTarget;
   dropDiskIntoColumn(columnThatWasClicked);
-  // see if the game has been won or tied
   const winner = determineGameWinner(boardModel);
   if (winner !== null) {
     displayWhoWon(winner);
@@ -58,7 +42,7 @@ const columnClickHandler = function (event) {
   } else if (gameIsATie(boardModel)) {
     displayTieMessage();
     gameOver = 1;
-  } else if (gameOver == 0) {
+  } else if (gameOver === 0) {
     displayCurrentPlayer(currentPlayer);
   }
 };
@@ -73,6 +57,10 @@ const createColumnEventListeners = function () {
   document.querySelector('#col6').addEventListener('click', columnClickHandler);
 };
 
+const createResetButton = function () {
+  document.querySelector('#reset').addEventListener('click', resetGame);
+};
+
 const determineGameWinner = function (board) {
   const horz = winnerHorizontal(board);
   const vert = winnerVertical(board);
@@ -82,25 +70,18 @@ const determineGameWinner = function (board) {
 
   if (horz !== null) {
     winner = horz;
-    //       gameOver = 1;
   } else if (vert !== null) {
     winner = vert;
-    //       gameOver = 1;
   } else if (dnrt !== null) {
     winner = dnrt;
-    //       gameOver = 1;
   } else if (uprt !== null) {
     winner = uprt;
-    //     gameOver = 1;
   } else {
     winner = null;
   }
 
-  // return 1, 2, or null (tie or game isn't isn't over)
   return winner;
 };
-
-const displayBoard = function (boardModel) {};
 
 const displayCurrentPlayer = function (currPlayer) {
   displayMessage(`Player ${currPlayer}'s turn!`);
@@ -109,7 +90,6 @@ const displayCurrentPlayer = function (currPlayer) {
 const displayMessage = function (message) {
   document.getElementById('message').innerHTML = '';
   document.getElementById('message').append(message);
-  console.log(message);
 };
 
 const displayTieMessage = function () {
@@ -138,9 +118,26 @@ const gameIsATie = function () {
 };
 
 const initializeGame = function () {
-  displayBoard(boardModel);
   createColumnEventListeners();
+  createResetButton();
   displayCurrentPlayer(currentPlayer);
+};
+
+const resetGame = function () {
+  currentPlayer = 1;
+  gameOver = 0;
+  numberOfDiscsPlayed = 0;
+  boardModel = [
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+  ];
+  displayMessage('');
+  cleanBoard(boardModel);
+  initializeGame();
 };
 
 const switchToNextPlayer = function () {
